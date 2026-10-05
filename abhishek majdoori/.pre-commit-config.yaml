@@ -1,0 +1,76 @@
+repos:
+  # ---------------------------------------------------------------------------
+  # Standard file hygiene (trailing whitespace, EOF newline, YAML/TOML syntax)
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: debug-statements
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: detect-private-key
+      - id: no-commit-to-branch
+        args: [--branch=main, --branch=master]
+
+  # ---------------------------------------------------------------------------
+  # Black — opinionated Python formatter
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  # ---------------------------------------------------------------------------
+  # isort — import ordering (Black-compatible profile)
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: [--profile=black]
+
+  # ---------------------------------------------------------------------------
+  # Ruff — fast linter (replaces flake8, bandit, etc.)
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.9
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+        # ruff-format is an alternative formatter; we run it AFTER black
+        # so Black is authoritative. Remove if you prefer ruff-format only.
+
+  # ---------------------------------------------------------------------------
+  # mypy — static type checking
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.1
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - pydantic>=2.7.0
+          - pydantic-settings>=2.3.0
+          - types-beautifulsoup4>=4.12.0
+          - playwright>=1.44.0
+        args: [--config-file=pyproject.toml]
+        files: ^src/
+
+  # ---------------------------------------------------------------------------
+  # pyproject-fmt — keeps pyproject.toml consistently formatted
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/tox-dev/pyproject-fmt
+    rev: 2.2.1
+    hooks:
+      - id: pyproject-fmt
